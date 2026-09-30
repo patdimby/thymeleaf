@@ -46,8 +46,9 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
+                        // Existing /admin pages are public demo views, not a protected admin area.
                         .requestMatchers("/admin/**").permitAll()
-                        .requestMatchers("/resources/**").permitAll()
+                        .requestMatchers("/resources/**", "/css/**", "/js/**", "/images/**", "/fonts/**", "/webjars/**", "/favicon.ico").permitAll()
                         .anyRequest().authenticated())
                 .exceptionHandling(exception -> exception
                         .accessDeniedHandler(accessDeniedHandler) // 🧩 Add here.

@@ -19,7 +19,7 @@ public class PostDto {
     private String url;
     @NotEmpty(message = "Post content should not be empty")
     private String content;
-    @NotEmpty(message = "Post short description should be empty")
+    @NotEmpty(message = "Post short description should not be empty")
     private String shortDescription;
     private LocalDateTime createdOn;
     private LocalDateTime updatedOn;

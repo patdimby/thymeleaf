@@ -1,10 +1,26 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Postage</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Posts | Thymeleaf Content Starter</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
 </head>
 <body>
-
+<main class="container py-5">
+    <h1>Posts</h1>
+    <p class="text-muted">Published content from the application database.</p>
+    <p th:if="${#lists.isEmpty(posts)}">No posts available yet.</p>
+    <!-- th:text escapes database content instead of treating it as executable HTML. -->
+    <table class="table" th:if="${!#lists.isEmpty(posts)}">
+        <thead><tr><th scope="col">Title</th><th scope="col">Summary</th><th scope="col">Created</th></tr></thead>
+        <tbody><tr th:each="post : ${posts}">
+            <td th:text="${post.title}">Title</td>
+            <td th:text="${post.shortDescription}">Summary</td>
+            <td th:text="${post.createdOn}">Created</td>
+        </tr></tbody>
+    </table>
+    <a th:href="@{/admin/index}">Back to home</a>
+</main>
 </body>
 </html>

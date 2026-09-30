@@ -6,11 +6,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.List;
 
+@org.springframework.stereotype.Controller
 public class HomeController {
     @GetMapping("/admin/index")
     public String posts(Model model){
 
         model.addAttribute("index", "home");
-        return "/admin/index";
+        return "admin/index";
     }
 }

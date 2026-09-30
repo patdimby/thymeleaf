@@ -34,11 +34,13 @@ public class User {
     @NotBlank(message = "Email is mandatory")
 	private String email;
 	
-	@NotBlank(message = "Password cannot be black")
+	@NotBlank(message = "Password cannot be blank")
 	private String password;
 	
 	@NotNull(message = "Role is mandatory")
-	private UserRole role; // ROLE_USER, ROLE_ADMIN
+	// Store names instead of enum ordinals so reordering the enum is safe.
+    @Enumerated(EnumType.STRING)
+    private UserRole role; // ROLE_USER, ROLE_ADMIN
 	
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinTable(

@@ -17,12 +17,12 @@ public class PostController {
         this.postService = postService;
     }
 
-    // create handler method, GET request and return model and view
+    // Expose DTOs to the template without leaking JPA entities into the view layer.
     @GetMapping("/admin/posts")
     public String posts(Model model){
         List<PostDto> posts = postService.findAllPosts();
         model.addAttribute("posts", posts);
-        return "/admin/posts";
+        return "admin/posts";
     }
 
 }

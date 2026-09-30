@@ -20,6 +20,7 @@ public class PostServiceImpl implements PostService {
         this.postRepository = postRepository;
     }
 
+    @org.springframework.transaction.annotation.Transactional(readOnly = true)
     @Override
     public List<PostDto> findAllPosts() {
         List<Post> posts = postRepository.findAll();

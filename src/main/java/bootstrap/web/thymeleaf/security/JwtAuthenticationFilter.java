@@ -9,6 +9,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -39,7 +40,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         jwt = authHeader.substring(7); // Delete "Bearer "
 
         try {
-            // 👇 This line can start ExpiredJwtException
+            // Verify claims before loading the account from the database.
             username = jwtService.extractUsername(jwt);
 
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -54,10 +55,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 }
             }
 
-            filterChain.doFilter(request, response);
-
         } catch (io.jsonwebtoken.ExpiredJwtException e) {
-            // ⏰ Expired token
+            // Invalid credentials terminate the chain with a 401 response.
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType("application/json");
             response.getWriter().write("""
@@ -65,7 +64,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                           "error": "⏰ JWT token expired. Try to connect again."
                         }
                     """);
-        } catch (io.jsonwebtoken.JwtException | IllegalArgumentException e) {
+            return;
+        } catch (io.jsonwebtoken.JwtException | IllegalArgumentException | UsernameNotFoundException e) {
             // 🔐 Invalid token (signature, format, etc.)
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType("application/json");
@@ -74,7 +74,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                           "error": "🔐 Invalid token. Authentication failed."
                         }
                     """);
+            return;
         }
+        // Downstream application exceptions must not be reported as JWT errors.
+        filterChain.doFilter(request, response);
     }
 
 }
